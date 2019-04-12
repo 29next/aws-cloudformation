@@ -9,10 +9,16 @@ Resources:
 {% set ro_accounts = repo_config.get('ReadOnlyAccounts') %}
 {% set rw_services = repo_config.get('ReadWriteServices') %}
 {% set ro_services = repo_config.get('ReadOnlyServices') %}
+{% set lifecycle_policy_text = repo_config.get('LifecyclePolicyText') %}
   {{ repo_name | regex_replace('[^a-zA-Z0-9]', ' ') | title | regex_replace('\s', '') }}:
     Type: "AWS::ECR::Repository"
     Properties:
       RepositoryName: "{{ repo_name }}"
+{% if lifecycle_policy_text %}
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {{ lifecycle_policy_text }}
+{% endif %}
 {% if rw_accounts or ro_accounts or rw_services or ro_services %}
       RepositoryPolicyText:
         Version: "2008-10-17"
